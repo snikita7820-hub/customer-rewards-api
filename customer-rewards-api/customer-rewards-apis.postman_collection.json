@@ -1,0 +1,73 @@
+{
+  "info": {
+    "_postman_id": "6fc75b76-842a-44c0-ab35-8f0ee9188917",
+    "name": "customer-rewards-apis",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "13999001"
+  },
+  "item": [
+    {
+      "name": "getRewardByCustomerId",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/rewards/getRewardByCustomerId/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "rewards",
+            "getRewardByCustomerId",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "getAllCustomerRewards",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/rewards/getAllCustomerRewards",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "rewards",
+            "getAllCustomerRewards"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "healthApi",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/actuator/health",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "actuator",
+            "health"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
