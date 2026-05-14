@@ -11,6 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Controller class responsible for handling
+ * reward related REST API requests.
+ */
+
 @RestController
 @RequestMapping("/api/rewards")
 @Tag(name = "Rewards API", description = "Customer rewards APIs")
@@ -27,6 +32,12 @@ public class RewardController {
     public List<CustomerRewardSummary> getRewards() {
         return rewardService.getAllCustomerRewards();
     }
+
+    /**
+     * Fetches reward points for a customer.
+     * @PathVariable customerId customer identifier
+     * @return customer reward summary response
+     */
 
     @GetMapping("/getRewardByCustomerId/{customerId}")
     @Operation(summary = "Get rewards for customer by customerId")

@@ -10,7 +10,7 @@ public class RewardServiceTest {
     @Test
     void calculateRewardPoints() {
 
-        int points = service.calculateRewardPoints(120);
+        int points = service.calculatePnts(120,"Test User - 90 points");
 
         assertEquals(90, points);
     }
@@ -18,7 +18,7 @@ public class RewardServiceTest {
     @Test
     void zeroPointsForAmtBelow50() {
 
-        int points = service.calculateRewardPoints(40);
+        int points = service.calculatePnts(40, "Test User - 40 points");
 
         assertEquals(0, points);
     }
