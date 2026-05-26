@@ -2,7 +2,7 @@ package com.rewards.customer.exception;
 
 public class InvalidTransactionException extends RuntimeException {
 
-    public InvalidTransactionException(String message) {
-        super(message);
+    public InvalidTransactionException(String msg) {
+        super(msg);
     }
 }
