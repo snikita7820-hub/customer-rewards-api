@@ -1,50 +1,88 @@
 package com.rewards.customer.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.Positive;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+/**
+ * Entity class representing customer transaction details.
+ * <p>
+ * This entity stores purchase transaction information
+ * used for reward point calculation.
+ * <p>
+ * Mapped Database Table:
+ * customer_transaction
+ * <p>
+ * Each transaction contains:
+ * <p>
+ * Transaction id
+ * Customer id
+ * Transaction amount
+ * Transaction date
+ */
+@Entity
+@Table(name = "customer_transaction")
 public class Transaction {
 
-    private Long customerId;
-    private String customerName;
-    private double amount;
-    private LocalDate transactionDate;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "Transaction ID", example = "1")
+    private long txnId;
 
-    public Long getCustomerId() {
-        return customerId;
+    @NotBlank(message = "Customer ID cannot be blank")
+    @Schema(description = "Customer ID", example = "CUST001")
+    private String custId;
+
+    @Positive(message = "Amount must be greater than 0")
+    @Schema(description = "Transaction amount", example = "120")
+    private BigDecimal amount;
+
+    @NotNull(message = "Transaction date cannot be null")
+    @PastOrPresent(message = "transaction date cannot be in the future")
+    @Schema(description = "Transaction date", example = "2026-05-20")
+    private LocalDate date;
+
+    public long getTxnId() {
+        return txnId;
     }
 
-    public void setCustomerId(Long customerId) {
-        this.customerId = customerId;
+    public void setTxnId(long txnId) {
+        this.txnId = txnId;
     }
 
-    public String getCustomerName() {
-        return customerName;
+    public String getCustId() {
+        return custId;
     }
 
-    public void setCustomerName(String customerName) {
-        this.customerName = customerName;
+    public void setCustId(String custId) {
+        this.custId = custId;
     }
 
-    public double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 
-    public LocalDate getTransactionDate() {
-        return transactionDate;
+    public LocalDate getDate() {
+        return date;
     }
 
-    public void setTransactionDate(LocalDate transactionDate) {
-        this.transactionDate = transactionDate;
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
+
+    @Override
+    public String toString() {
+        return "Transaction [txnId=" + txnId + ", custId=" + custId + ", amount=" + amount + ", date=" + date + "]";
+    }
+
 }
