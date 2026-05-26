@@ -1,81 +1,110 @@
-# Rewards API - Spring Boot
+# Customer Rewards API
 
-## Overview
+A Spring Boot REST API that calculates customer reward points based on purchase transactions over the last 3 months.
 
-This project is a Spring Boot based REST API that calculates customer reward points based on transaction amounts.
+## Reward Points Rules
 
-Reward points are calculated using the following rules:
+| Purchase Amount | Points Earned |
+|----------------|---------------|
+| $0 – $50       | 0 points |
+| $50 – $100     | 1 point per dollar above $50 |
+| Over $100      | 2 points per dollar above 100 + 50 points for the $50–$100 tier |
 
-- 2 points for every dollar spent above 100
-- 1 point for every dollar spent between 50 and 100
+**Example:** A $120 purchase earns `(120 - 100) × 2 + 50 = 90 points`
 
 ---
 
 ## Tech Stack
 
 - Java 17
-- Spring Boot
-- Maven
-- REST API
-- Swagger / OpenAPI
-- Spring Boot Actuator
-- JUnit
-- Jackson
+- Spring Boot 3.5
+- Spring Data JPA + H2 (in-memory)
+- Lombok
+- JUnit 5 + Mockito
+- Swagger
 
 ---
 
-## Postman Collection
+## Getting Started
 
-Postman collection is added to the project for easy API testing.
+### Prerequisites
+- Java 17+
+- Maven 3.8+
 
-### Location
-
-```text
-customer-rewards-api/customer-rewards-apis.postman_collection.json
+### Run the application
+```bash
+./mvnw spring-boot:run
 ```
+
+The app starts at `http://localhost:8080`. Sample data is loaded automatically via `data.sql`.
+
+### Run tests
+```bash
+./mvnw test
+```
+
+---
+
+## API Endpoints
+
+### Get reward points for all customers
+```
+http://localhost:8080/api/rewards/calculate-reward-points
+```
+
+**Example:** `GET /api/rewards/calculate-reward-points`
+
+**Sample Response:**
+```json
+{
+  "custId": "customer1",
+  "monthlyRewardPoints": {
+    "MARCH": 0,
+    "FEBRUARY": 150
+  },
+  "totalRewardPoints": 150
+}
+```
+
+### Health check
+```
+GET /actuator/health
+```
+
+---
+
+## H2 Console (Dev)
+
+Access the in-memory database at: `http://localhost:8080/h2-console`
+
+- **JDBC URL:** `jdbc:h2:mem:testdb`
+- **Username:** `sa`
+- **Password:** 
 
 ---
 
 ## Project Structure
 
-```text
-src/main/java
-│
-├── controller
-│   └── RewardsController.java
-│
-├── service
-│   └── RewardsService.java
-│
-├── dto
-│   ├── CustomerRewardSummary.java
-│   └── MonthlyReward.java
-│
-├── entity
-│   └── Transaction.java
-│
-├── exception
-│   ├── GlobalExceptionHandler.java
-│   └── InvalidTransactionException.java
-│
-└── CustomerRewardsApiApplication.java
-
-src/test/java
-│
-├── controller
-│   └── RewardControllerIntegrationTest.java
-│
-└── service
-    └── RewardServiceTest.java
 ```
-
----
-
-## Additional Features
-
-- Swagger/OpenAPI documentation
-- Spring Boot Actuator for health monitoring
-- Unit test cases using JUnit and Mockito
-- Global exception handling
-- Layered architecture design
-- Postman collection for API testing
+src/
+├── main/
+│   ├── java/com/rewards/customer/
+│   │   ├── controller/   # RewardsController
+│   │   ├── service/      # RewardsService, RewardsServiceImpl (points calculation logic)
+│   │   ├── entity/       # Customer, Transaction
+│   │   ├── dto/          # Reward
+│   │   ├── repository/   # TransactionRepository
+│   │   ├── util/         # RewardUtil
+│   │   ├── exception/    # GlobalExceptionHandler, IllegalArgumentException, InvalidTransactionException
+│   │   └── CustomerRewardsApiApplication
+│   └── resources/
+│       ├── data.sql      # Sample data
+│       └── application.properties
+└── test/
+    └── java/com/rewards/customer/
+        ├── controller/   # RewardsControllerTest
+        ├── integration/  # RewardsControllerIntegrationTest
+        ├── service/      # RewardsServiceImplTest
+        ├── util/         # RewardUtilTest
+        └── RewardsApplication.java
+```

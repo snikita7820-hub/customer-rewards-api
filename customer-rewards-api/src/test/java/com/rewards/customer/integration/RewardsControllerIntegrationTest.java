@@ -1,104 +1,65 @@
 package com.rewards.customer.integration;
 
-import com.rewards.customer.dto.Reward;
-import com.rewards.customer.entity.Transaction;
-import com.rewards.customer.exception.InvalidTransactionException;
-import com.rewards.customer.repository.TransactionRepository;
-import com.rewards.customer.service.RewardsServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.test.web.servlet.MockMvc;
 
-@ExtendWith(MockitoExtension.class)
-class RewardsServiceImplTest {
+import com.rewards.customer.CustomerRewardsApiApplication;
+import com.rewards.customer.entity.Transaction;
+import com.rewards.customer.repository.TransactionRepository;
 
-    @Mock
+
+@AutoConfigureMockMvc
+@SpringBootTest(classes = CustomerRewardsApiApplication.class)
+class RewardsControllerIntegrationTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
     private TransactionRepository repo;
 
-    @InjectMocks
-    private RewardsServiceImpl service;
-
-    private Transaction transaction1;
-    private Transaction transaction2;
-
     @BeforeEach
-    void setUp() {
+    void setup() {
 
-        transaction1 = new Transaction();
-        transaction1.setTxnId(1);
-        transaction1.setCustId("CUSTOMER1");
-        transaction1.setAmount(BigDecimal.valueOf(120.0));
-        transaction1.setDate(LocalDate.of(2025, 1, 10));
+        repo.deleteAll();
 
-        transaction2 = new Transaction();
-        transaction2.setTxnId(2);
-        transaction2.setCustId("CUSTOMER1");
-        transaction2.setAmount(BigDecimal.valueOf(80.0));
-        transaction2.setDate(LocalDate.of(2025, 1, 15));
+        Transaction t1 = new Transaction();
+        t1.setCustId("CUSTOMER1");
+        t1.setAmount(BigDecimal.valueOf(120.0));
+        t1.setDate(LocalDate.of(2025, 1, 10));
+
+        Transaction t2 = new Transaction();
+        t2.setCustId("CUSTOMER1");
+        t2.setAmount(BigDecimal.valueOf(80.0));
+        t2.setDate(LocalDate.of(2025, 1, 15));
+
+        repo.save(t1);
+        repo.save(t2);
     }
 
     @Test
-    void testGetRewardPoints() {
+    void testCalculateRewardPoints() throws Exception {
 
-        List<Transaction> transactions =
-                Arrays.asList(transaction1, transaction2);
-
-        List<Reward> rewards = service.getrewardpoints(transactions);
-
-        assertNotNull(rewards);
-        assertEquals(1, rewards.size());
-
-        Reward reward = rewards.get(0);
-
-        assertEquals("CUSTOMER1", reward.getCustId());
-
-
-        assertEquals(120, reward.getTotalRewardPoints());
-
-        assertTrue(reward.getMonthlyRewardPoints()
-                .containsKey("JANUARY"));
-
-        assertEquals(120,
-                reward.getMonthlyRewardPoints().get("JANUARY"));
-    }
-
-    @Test
-    void testNegativeTransactionAmount() {
-
-        Transaction transaction = new Transaction();
-        transaction.setCustId("CUSTOMER1");
-        transaction.setAmount(BigDecimal.valueOf(-100.0));
-        transaction.setDate(LocalDate.now());
-
-        List<Transaction> list = List.of(transaction);
-
-        assertThrows(InvalidTransactionException.class,
-                () -> service.getrewardpoints(list));
-    }
-
-    @Test
-    void testGetTransactionList() {
-
-        List<Transaction> transactions =
-                Arrays.asList(transaction1, transaction2);
-
-        when(repo.findAll()).thenReturn(transactions);
-
-        List<Transaction> result = service.getTransactionList();
-
-        assertEquals(2, result.size());
-
-        verify(repo, times(1)).findAll();
+        mockMvc.perform(
+                        get("/api/rewards/calculate-reward-points"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].custId")
+                        .value("CUSTOMER1"))
+                .andExpect(jsonPath("$[0].totalRewardPoints")
+                        .value(120))
+                .andExpect(jsonPath(
+                        "$[0].monthlyRewardPoints.JANUARY")
+                        .value(120));
     }
 }
