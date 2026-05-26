@@ -7,12 +7,12 @@
   },
   "item": [
     {
-      "name": "getRewardByCustomerId",
+      "name": "calculate-reward-points",
       "request": {
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://localhost:8080/api/rewards/getRewardByCustomerId/1",
+          "raw": "http://localhost:8080/api/rewards/calculate-reward-points",
           "protocol": "http",
           "host": [
             "localhost"
@@ -21,29 +21,7 @@
           "path": [
             "api",
             "rewards",
-            "getRewardByCustomerId",
-            "1"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "getAllCustomerRewards",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "http://localhost:8080/api/rewards/getAllCustomerRewards",
-          "protocol": "http",
-          "host": [
-            "localhost"
-          ],
-          "port": "8080",
-          "path": [
-            "api",
-            "rewards",
-            "getAllCustomerRewards"
+            "calculate-reward-points"
           ]
         }
       },
